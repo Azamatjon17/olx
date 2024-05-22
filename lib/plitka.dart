@@ -1,24 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:olx/databases.dart';
 import 'package:olx/imagebases.dart';
 
 class Plitka extends StatefulWidget {
-  const Plitka({super.key});
+  bool revers;
+  Plitka({super.key, required this.revers});
 
   @override
   State<Plitka> createState() => _PlitkaState();
 }
 
 class _PlitkaState extends State<Plitka> {
+  List products = [];
+  int current = 0;
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-        itemCount: 20,
-        padding: const EdgeInsets.all(15),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 3 / 5),
-        itemBuilder: (ctx, index) {
-          return Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white), child: Itemwidget(image: Imagebases.carImageUrls[index], name: "Universal mahsulot", city: "Tashken, Chilonzor", price: "50 000 so'm"));
-        });
+    return Column(
+      children: [
+        const Gap(10),
+        TextField(
+          onTap: () {
+            current = 1;
+            setState(() {});
+          },
+          onChanged: (vale) {
+            products = [];
+            for (var i = 0; i < Databases.products.length; i++) {
+              if (Databases.products[i]["name"].contains(vale)) {
+                products.add(Databases.products[i]);
+              }
+            }
+            setState(() {});
+          },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+        Expanded(
+            child: current == 0
+                ? GridView.builder(
+                    reverse: widget.revers,
+                    itemCount: 40,
+                    padding: const EdgeInsets.all(15),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 3 / 5),
+                    itemBuilder: (ctx, index) {
+                      return Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white), child: Itemwidget(image: Imagebases.carImageUrls[index], name: Databases.products[index]["name"], city: Databases.products[index]["city"], price: Databases.products[index]["price"]));
+                    })
+                : GridView.builder(
+                    reverse: widget.revers,
+                    itemCount: products.length,
+                    padding: const EdgeInsets.all(15),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 3 / 5),
+                    itemBuilder: (ctx, index) {
+                      return Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white), child: Itemwidget(image: Imagebases.carImageUrls[index], name: products[index]["name"], city: products[index]["city"], price: products[index]["price"]));
+                    })),
+      ],
+    );
   }
 }
 

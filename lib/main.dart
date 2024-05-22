@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:olx/galary.dart';
@@ -5,29 +7,44 @@ import 'package:olx/plitka.dart';
 import 'package:olx/royxat.dart';
 
 void main(List<String> args) {
-  runApp(const MaterialApp(
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: MainBody(),
   ));
 }
 
 class MainBody extends StatefulWidget {
-  const MainBody({super.key});
+  MainBody({super.key});
 
   @override
   State<MainBody> createState() => _MainBodyState();
 }
 
 class _MainBodyState extends State<MainBody> {
-  List items = [const Galary(), const Listtype(), const Plitka()];
+  bool reversed = false;
+
   int currentindex = 0;
   @override
   Widget build(BuildContext context) {
+    List items = [
+      const Galary(),
+      const Listtype(),
+      Plitka(
+        revers: reversed,
+      )
+    ];
     return Scaffold(
       backgroundColor: const Color.fromARGB(229, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: Colors.yellow,
         actions: [
+          IconButton(
+            onPressed: () {
+              reversed = !reversed;
+              setState(() {});
+            },
+            icon: const Icon(Icons.reviews),
+          ),
           PopupMenuButton(
             icon: const Icon(CupertinoIcons.list_bullet),
             onSelected: (value) {
@@ -41,7 +58,7 @@ class _MainBodyState extends State<MainBody> {
                   child: Text("Galary"),
                 ),
                 const PopupMenuItem(
-                  value: 1, 
+                  value: 1,
                   child: Text("Ro'yxat"),
                 ),
                 const PopupMenuItem(

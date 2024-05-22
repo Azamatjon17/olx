@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:olx/databases.dart';
 import 'package:olx/imagebases.dart';
 
 class Galary extends StatefulWidget {
@@ -10,15 +11,53 @@ class Galary extends StatefulWidget {
 }
 
 class _GalaryState extends State<Galary> {
+  int current = 0;
+
+  List products = [];
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
+    return Column(
       children: [
-        for (var i = 0; i < 20; i++)
-          Column(
-            children: [Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.white), height: MediaQuery.of(context).size.height / 2.1, child: Itemwidget(image: Imagebases.carImageUrls[i], name: "Universal mahsulot", city: "Tashken, Chilonzor", price: "50 000 so'm")), const Gap(20)],
-          )
+        const Gap(10),
+        TextField(
+          onTap: () {
+            current = 1;
+            setState(() {});
+          },
+          onChanged: (vale) {
+            products = [];
+            for (var i = 0; i < Databases.products.length; i++) {
+              if (Databases.products[i]["name"].contains(vale)) {
+                products.add(Databases.products[i]);
+              }
+            }
+            setState(() {});
+          },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+        Expanded(
+          child: current == 0
+              ? ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    for (var i = 0; i < Databases.products.length; i++)
+                      Column(
+                        children: [Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.white), height: 380, child: Itemwidget(image: Imagebases.carImageUrls[i % 30], name: Databases.products[i]["name"], city: Databases.products[i]["city"], price: Databases.products[i]["price"])), const Gap(20)],
+                      )
+                  ],
+                )
+              : ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    for (var i = 0; i < products.length; i++)
+                      Column(
+                        children: [Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.white), height: 380, child: Itemwidget(image: Imagebases.carImageUrls[i % 30], name: products[i]["name"], city: products[i]["city"], price: products[i]["price"])), const Gap(20)],
+                      )
+                  ],
+                ),
+        ),
       ],
     );
   }
@@ -30,8 +69,9 @@ class Itemwidget extends StatefulWidget {
   String name;
   String city;
   String price;
-  Itemwidget({super.key, required this.image, required this.name, required this.city, required this.price});
   bool islike = false;
+
+  Itemwidget({super.key, required this.image, required this.name, required this.city, required this.price});
   @override
   State<Itemwidget> createState() => _ItemwidgetState();
 }
